@@ -24,10 +24,6 @@ class KpcaStdEigDecomp:
         self.e, self.v = torch.linalg.eigh(self.K / params['eta'])
         self.v = torch.nn.functional.normalize(self.v, dim=0)  # normalize eigenvector
 
-
-    def reconstruct(self):
-        pass
-
     def preimage_approx(self, gamma, input_data, x0):
         z_old = x0.reshape(1, x0.shape[0])
         kernel_args = self.params['kernel_args']
