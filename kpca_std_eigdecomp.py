@@ -50,12 +50,13 @@ class KpcaStdEigDecomp:
                 continue
 
             if torch.norm(z - z_old) < 10E-6:
-                print('converge!')
+                print('Converge!')
                 return z
 
             z_old = z
             i += 1
-
+        
+        print('Maximum iteration exceeds!')
         return z
 
     def reconstruct(self, input_data, test_data):
