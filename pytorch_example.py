@@ -5,6 +5,7 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import ExponentialLR
 
 # Simple example of pytorch optimization
+# https://www.cl.cam.ac.uk/teaching/2021/LE49/probnn/3-3.pdf
 class StraightLine(nn.Module):
     def __init__(self):
         super().__init__()

@@ -1,5 +1,5 @@
-import numpy as np
-from scipy.spatial.distance import pdist, squareform
+import torch
+from torch.nn.functional import pairwise_distance
 
 # Typical kernel functions (Scholkopf & Smola, 2001)
 def rbf_func(x, args):
@@ -10,8 +10,13 @@ def rbf_func(x, args):
     sig2 = args['sig2']
     assert sig2 > 0
 
-    dist = squareform(pdist(x, 'sqeuclidean'))
-    return np.exp(-dist / (2 * sig2))
+    n = x.shape[0]
+    dist_matrix = torch.zeros((n, n))
+
+    for i in range(n):
+        dist_matrix[i, :] = pairwise_distance(x, x[i, :], p = 2)
+
+    return torch.exp(- torch.square(dist_matrix) / 2 / sig2)
 
 def laplace_func(x, args):
     """
@@ -20,12 +25,18 @@ def laplace_func(x, args):
     """
     sig = args['sig']
     assert sig > 0
-    dist = squareform(pdist(x, 'sqeuclidean'))
-    return np.exp(-dist / sig)
+
+    n = x.shape[0]
+    dist_matrix = torch.zeros((n, n))
+
+    for i in range(n):
+        dist_matrix[i, :] = pairwise_distance(x, x[i, :], p = 2)
+
+    return torch.exp(- dist_matrix / sig)
 
 def compute_kernel(x, f, args):
     """
     Kernel matrix with custom function
     """
     kernel_matrix = f(x, args)
-    return (kernel_matrix + kernel_matrix.T) / 2
+    return (kernel_matrix + kernel_matrix.transpose(0, 1)) / 2

@@ -1,66 +1,45 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.optim.lr_scheduler import ExponentialLR
 from math_custom import compute_kernel, rbf_func
 
 # kernel PCA - (Suykens, 2017)
-# Shallow case - level 1
-class KpcaStd:
+# Shallow case - level 1, implicit feature map
+class KpcaStd(nn.Module):
 
-    def __init__(self, input_dim):
+    def __init__(self, input_dim, params):
+        super().__init__()
         self.n_sample = input_dim[0]
         self.s = input_dim[1]
-        assert self.s <= self.n_sample
-        self.param = dict()
 
-    def loss(self):
-        """
-        loss function, stabilized version, referred to J_{deep, P_stab} in the paper
-        """
-        # get param
-        hidden, inv_lambda_diag = self.param['hidden'], self.param['inv_lambda_diag']
-        kernel, eta, c_stab = self.param['kernel'], self.param['eta'], self.param['c_stab']
+        self.kernel_matrix = None
+        self.eta = params['eta']
+        self.c_stab = params['c_stab']
+        self.f = params['f']
+        self.kernel_args = params['kernel_args']
 
-        # update cost
-        cost = 0
+        # initialization with Gaussian distribution
+        scale = 10E-1
+        self.weight = nn.Parameter(scale * torch.randn(self.n_sample, self.s))
+        self.inv_lambda_diag = nn.Parameter(scale * torch.randn(self.s))
+
+    def forward(self, input_data):
+        # compute kernel matrix
+        self.kernel_matrix = compute_kernel(input_data, self.f, self.kernel_args)
+
+        #  first part of loss, involving eigenvalues
+        loss1 = 0
         for i in range(self.n_sample):
-            e = (hidden.dot(kernel[:, i])) / eta
-            cost += - e.dot(e * inv_lambda_diag) / 2
+            e_j = torch.matmul(self.weight.transpose(0, 1), self.kernel_matrix[:, i])
+            loss1 += torch.dot(e_j, torch.mul(self.inv_lambda_diag, e_j))
+        loss1 /= (-2 * self.eta ** 2)
 
-        cost += eta / 2 * np.trace(hidden.dot(kernel.dot(hidden.T)))
-        return cost + c_stab / 2 * (cost ** 2)
+        # second part of loss, involving matrix norm
+        loss2 = torch.trace(torch.mm(torch.mm(self.weight.transpose(0, 1), self.kernel_matrix), self.weight))
+        loss2 /= (2 * self.eta)
 
-    def grad(self):
-        """
-        the gradient of loss function
-        """
-        # get param
-        hidden, inv_lambda_diag = self.param['hidden'], self.param['inv_lambda_diag']
-        kernel, eta, c_stab = self.param['kernel'], self.param['eta'], self.param['c_stab']
-
-        # evaluate gradient
-        dinv_lambda = np.zeros((self.s, self.s))
-        # dhidden =
-
-        for i in range(self.n_sample):
-            e = (hidden.dot(kernel[:, i])) / eta
-            dinv_lambda += np.outer(e, e)
-        dinv_lambda /= -2
-
-        pass
-
-    def param_initialize(self):
-        """initialize parameters by sampling """
-        var = 1E-5
-        hidden = var * np.random.randn(self.s, self.n_sample)
-        inv_lambda_diag = var * np.random.randn(self.s)
-        return hidden, inv_lambda_diag
-
-    def fit(self, input_data, eta, c_stab, sig2):
-        self.param['eta'] = eta
-        self.param['c_stab'] = c_stab
-        self.param['kernel'] = compute_kernel(input_data, rbf_func, {'sig2': sig2})
-
-        self.param['hidden'], self.param['inv_lambda_diag'] = self.param_initialize()
-        loss = self.loss()
-        return loss
+        # total loss
+        loss_stab = (loss1 + loss2) + self.c_stab / 2 * torch.square(loss1 + loss2)
+        return loss_stab
