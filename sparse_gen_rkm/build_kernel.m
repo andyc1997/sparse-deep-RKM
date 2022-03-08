@@ -4,7 +4,7 @@ function K = build_kernel(X, params)
     % expect params = {'rbf_func', sig2}
     if strcmp(params{1}, 'rbf_func') % radial basis function kernel
         D = pdist(X, 'squaredeuclidean');
-        K = exp(-squareform(D)./ (2*params{2}^2));     
+        K = exp(-squareform(D)./ (2*params{2}));     
    
     % expect params = {'laplace', sig}
     elseif strcmp(params{1}, 'laplace_func')
@@ -18,3 +18,5 @@ function K = build_kernel(X, params)
     end
     
 end
+
+% debugged
