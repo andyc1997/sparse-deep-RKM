@@ -21,7 +21,7 @@ function varargout=GPower(varargin)
 %
 %
 % Refer to:  
-%   M. JournÈe, Y. Nesterov, P. Richt·rik, R. Sepulchre, Generalized power 
+%   M. Journ√©e, Y. Nesterov, P. Richt√°rik, R. Sepulchre, Generalized power 
 %   Method for sparse principal component analysis, arXiv:0811.4724v1, 2008
 %
 
