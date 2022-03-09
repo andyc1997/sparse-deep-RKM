@@ -19,6 +19,10 @@ function [V, D, K] =  sparse_kernel_pca_rkm(X, ft_map, params, s, no_sparse, on_
     assert(on_stm == 1 || on_stm == 0, 'on_stm must be either 0 or 1')
     assert(strcmp(params{3}, 'eta'), 'eta must be provided')
     
+    if no_sparse == 0
+        assert(strcmp(params{5}, 'gamma'), 'sparsity factor must be provided')
+    end
+    
     % check explicit or implicit feature map
     if isempty(ft_map) == 1
         state = 'implicit';
@@ -52,15 +56,17 @@ function [V, D, K] =  sparse_kernel_pca_rkm(X, ft_map, params, s, no_sparse, on_
     
     if on_stm == 0
         % sparse PCA - Gpower method l0 norm, Euclidean space
-        gamma = 0.1*ones(1, s);  
-        V = GPower(K, gamma.^2, s, 'l0', 0);
+        gamma = params{6}*ones(1, s);  
+        R = chol(K + diag(1E-10*ones(1, N)));
+        V = GPower(R', gamma.^2, s, 'l0', 0);
         D = diag(V'*K*V);
         
     elseif on_stm == 1
         % sparse PCA - Gpower method l0 norm, Stiefel manifold
-        gamma = 0.1*ones(1, s);
+        gamma = params{6}*ones(1, s);
         mu = (1:s).^(-1); 
-        V = GPower(K, gamma.^2, s, 'l0', 1, mu);
+        R = chol(K + diag(1E-10*ones(1, N)));
+        V = GPower(R', gamma.^2, s, 'l0', 1, mu);
         D = diag(V'*K*V);
     end
 end

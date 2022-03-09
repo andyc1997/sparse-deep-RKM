@@ -1,8 +1,13 @@
 function Xgen = gen_new_x(Xtr, K, params, Htr, Hgen, Nr)
+    % *********************************************************
+    % Xtr: training data (number of obs * number of feature)
+    % K: centered kernel matrix
+    % params: parameters for kernel PCA
     % Htr: learned hidden feature
     % Hgen: sampled hidden feature, when Hgen = Htr, it is same as
     % denoising
-
+    % Nr: number of obs used in kernel smoothing
+    % *********************************************************
     assert(Nr > 0, 'Nr must be positive')
     assert(strcmp(params{3}, 'eta'), 'eta must be provided')
     
