@@ -33,11 +33,16 @@ Xts = Xts + 0.4*randn(size(Xts));
 
 %% Train with implicit kernel
 s = 200;
-params = {'rbf_func', 5^2, 'eta', 1, 'gamma', 0.001};
+params = {'rbf_func', 5^2, 'eta', 1, 'gamma', 0.01};
 
-[V, D, K] = sparse_kernel_pca_rkm(Xtr, [], params, s, 1, 0); % classical kPCA
-[Vs, Ds, ~] = sparse_kernel_pca_rkm(Xtr, [], params, s, 0, 0); % sparse kPCA
-%[Vst, Dst, ~] = sparse_kernel_pca_rkm(Xtr, [], params, s, 0, 1); % sparse kPCA on St manifold
+[V, D, K] = sparse_kernel_pca_rkm(Xtr, [], params, s, 1, 0, 'gpowerl0'); % classical kPCA
+% [Vs, Ds, ~] = sparse_kernel_pca_rkm(Xtr, [], params, s, 0, 0, 'gpowerl0'); % sparse kPCA
+% [Vst, Dst, ~] = sparse_kernel_pca_rkm(Xtr, [], params, s, 0, 1); % sparse kPCA on St manifold
+
+%%
+s = 20;
+params = {'rbf_func', 5^2, 'eta', 1, 'delta', Inf, 'delta2', -40};
+[Vs2, ~, ~] = sparse_kernel_pca_rkm(Xtr(1:40, :), [], params, s, 0, 0, 'elasticnet');
 
 %% Gen new features
 Hgen = gen_latent(Vs, 1, 10);
