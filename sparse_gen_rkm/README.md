@@ -1,4 +1,4 @@
-The folder `sparse_gen_rkm` contains MATLAB scripts for developing <i>Gen-RKM algorithm</i> (Pandey, 2021) with sparsity corporated in the latent variables. The files are organized as follows:
+The folder `sparse_gen_rkm` contains MATLAB scripts for developing <i>Gen-RKM algorithm</i> (Pandey, 2021) with sparsity corporated in the latent variables, using an implicit feature map. The files are organized as follows:
 
 <b>Utils:</b>
 - `random_seeds.m` generates 5 random seeds for experimental uses.
