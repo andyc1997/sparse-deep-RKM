@@ -6,7 +6,7 @@ function V = mm_sparse_eigen(A, b, s, rhos)
     % A: covariance matrix
     % b: vector of all positive elements
     % s: number of components to be extracted
-    % rho: penalty term for l0 norm
+    % rho: penalty term for l0 norm, not normalized
     % 
     % max_{x} x'*A*x - rho*card(x)
     % s.t. x'*diag(b)*x = 1
@@ -31,15 +31,21 @@ function V = mm_sparse_eigen(A, b, s, rhos)
         cont = 1;
         rho = rhos(comp);
         
-        % get new data matrix
-        [nV, nD] = eig(A, 'balance');
-        C = nV*sqrt(abs(nD))*nV';
+        % Cholesky decomposition, not a very efficient method because
+        % deflation is performed on covariance but not data matrix
+        try
+            C = chol(A);
+        catch
+            % warning('Input covariance matrix A is not positive definite.');
+            C = chol(A + 1E-10*eye(m));
+        end
         
         % initialized x0, same as GPower method, proposed by Journee et al.
         % (2010)
         [rho_max, i_max] = max(sqrt(sum(C.^2, 1)));
         x = C(:, i_max) / norm(C(:, i_max));
         
+
         % unnormalize rho
         rho = rho * rho_max^2;
         % disp(rho_max)
@@ -109,9 +115,7 @@ function V = mm_sparse_eigen(A, b, s, rhos)
         V(:, comp) = diag(1./sqrt(b))*x;
         
         % Schur complement deflation scheme
-        P = eye(m) - x*x';
-        A = P*A*P;
-        A = (A' + A)/2; % avoid numerical errors that cause asymmetry
+        A = sparse_deflation(A, x, 'schur_comp', []);
     end
     
 end

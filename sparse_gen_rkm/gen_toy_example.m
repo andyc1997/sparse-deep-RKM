@@ -5,11 +5,11 @@ cd 'C:\Users\user\Documents\Statistics\SPCA-DRKM-2021JUL01\work\new-function\spa
 % (Pandey et al., 2021)
 
 % Simulate 3 Gaussian distributions
-mu1 = [1, 2]; var1 = eye(2);
-mu2 = [-3, 0]; var2 = eye(2);
-mu3 = [2, -4]; var3 = eye(2);
+mu1 = [1, -0.5]; var1 = 0.1*eye(2);
+mu2 = [-1, -0.5]; var2 = 0.1*eye(2);
+mu3 = [0, 1]; var3 = 0.1*eye(2);
 
-Nsize = 500;
+Nsize = 1000;
 
 rng(80116)
 grp1 =  mvnrnd(mu1, var1, Nsize);

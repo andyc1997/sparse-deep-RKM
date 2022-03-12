@@ -14,20 +14,20 @@ function [V, D, K] =  multiview_skpca_rkm(X, Y, ft_map_x, ft_map_y, params, s, m
     % Syntax
     %
     % PCA:
-    % params = {'rbf_func', double, 'eta1', double, 'eta2', double}
+    % params = {'rbf_func', array of 1 by 2, 'eta1', double, 'eta2', double}
     %
     % GPowerl0:
-    % params = {'rbf_func', double, 'eta1', double, 'eta2', double, 'gamma', double or array of size 1 by s}
+    % params = {'rbf_func', array of 1 by 2, 'eta1', double, 'eta2', double, 'gamma', double or array of size 1 by s}
     %
     % GPowerl0_block:
-    % params = {'rbf_func', double, 'eta1', double, 'eta2', double, 'gamma', double or array of size 1 by s,
+    % params = {'rbf_func', array of 1 by 2, 'eta1', double, 'eta2', double, 'gamma', double or array of size 1 by s,
     % 'mu', [] or array of size 1 by s}
     %
     % MMl0:
-    % params = {'rbf_func', double, 'eta1', double, 'eta2', double, 'rhos', double or array of size 1 by s}
+    % params = {'rbf_func', array of 1 by 2, 'eta1', double, 'eta2', double, 'rhos', double or array of size 1 by s}
     %
     % TPower:
-    % params = {'rbf_func', double, 'eta1', double, 'eta2', double, 'rhos', double or array of size 1 by s,
+    % params = {'rbf_func', array of 1 by 2, 'eta1', double, 'eta2', double, 'rhos', double or array of size 1 by s,
     % rf: double}
     %
     % 
@@ -53,8 +53,10 @@ function [V, D, K] =  multiview_skpca_rkm(X, Y, ft_map_x, ft_map_y, params, s, m
     
     % implicit feature map
     if strcmp(state, 'implicit') == 1
-        Kx = build_kernel(X, params);
-        Ky = build_kernel(Y, params);
+        Kparams = {'rbf_func', params{2}(1)};
+        Kx = build_kernel(X, Kparams);
+        Kparams = {'rbf_func', params{2}(2)};
+        Ky = build_kernel(Y, Kparams);
     
     % explicit feature map
     elseif strcmp(state, 'explicit') == 1
@@ -70,8 +72,8 @@ function [V, D, K] =  multiview_skpca_rkm(X, Y, ft_map_x, ft_map_y, params, s, m
     end
     
     % kernel centering
-    P = eye(N) - ones(N)./N;
-    K = P*(1/params{4} * Kx + 1/params{6} * Ky)*P / params{4};
+    P = eye(N) - ones(N)/N;
+    K = P*(Kx/params{4} + Ky/params{6})*P;
     
     % classical PCA
     [V, D] = eigs(K, s);

@@ -23,11 +23,11 @@ function V = TPower(A, s, rhos, rf)
         % sequential decreasing in cardinality
         while card > floor(rho*m)
             card = floor(rf*card);
-            x_dom = TPower_leading_eig(A, x_dom, card);
+            x_dom = get_leading_eig(A, x_dom, card);
         end
         
         % Final update with prespecified cardinality
-        x_dom = TPower_leading_eig(A, x_dom, floor(rho*m));
+        x_dom = get_leading_eig(A, x_dom, floor(rho*m));
         V(:, comp) = x_dom;
         
         % Projection deflation scheme
@@ -35,7 +35,7 @@ function V = TPower(A, s, rhos, rf)
     end
 end
 
-function x_dom = TPower_leading_eig(A, x, card)
+function x_dom = get_leading_eig(A, x, card)
     % loop parameters
     cont = 1;
     iter = 1;
