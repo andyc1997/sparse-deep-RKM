@@ -17,3 +17,7 @@ The folder `sparse_gen_rkm` contains MATLAB scripts for developing <i>Gen-RKM al
 - `multiview_skpca_rkm.m` is the implementation of <i>sparse Gen-RKM algorithm</i> with implicit feature map when two data source are given.
 - `gen_latent.m` is the implementation of <i>generative kernel PCA</i> given hidden variables, number of cluster and number of samples to be generated. It first fits a <i>Gaussian mixture model</i> on the latent space representation, and randomly sample from it.
 - `gen_new_x.m` is the implementation of <i>generative kernel PCA</i> with <i>kernel smooting method</i>.
+
+<b>Disentanglement learning:</b>
+- `gen_toy_example.m` generates toy example of 3 Gaussian distributions discussed in Pandey (2021).
+- `toy.mat` is the generated dataset.
