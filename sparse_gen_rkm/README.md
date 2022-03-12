@@ -12,7 +12,7 @@ The folder `sparse_gen_rkm` contains MATLAB scripts for developing <i>Gen-RKM al
 - `TPower.m` is the implementation of <i>truncated power method</i> for sparse PCA (Yuan & Zhang, 2013).
 - `mm_sparse_eigen.m` is the implementation of <i>majorization-minorization (MM) algorithm</i> with l0 norm for sparse PCA (Song et al., 2014).
 - `sparse_deflation.m` is the implementation of alternative <i>matrix deflation schemes</i> for sparse PCA discussed in Mackey (2008).
-- `test_sparse_eigenvectors.mlx` is the livescript for testing all developed sparse PCA algorithms with numerical experiments proposed by Journee et al. (2010).
+- `test_case_sparse_pca.mlx` is the livescript for testing all developed sparse PCA algorithms with numerical experiments proposed by Journee et al. (2010).
 
 <b>Gen-RKM algorithms:</b>
 - `singleview_skpca_rkm.m` is the implementation of <i>sparse Gen-RKM algorithm</i> with implicit feature map when only single data source is given.
