@@ -8,7 +8,7 @@ function Hgen = gen_latent(Htr, l, Ngen)
     assert(Ngen > 0, 'Ngen must be positive');
     
     % Generate new latent variables
-    GMModel = fitgmdist(Htr, l);
+    GMModel = fitgmdist(Htr, l, 'SharedCovariance', true);
     h_dist = gmdistribution(GMModel.mu, GMModel.Sigma);
     Hgen = random(h_dist, Ngen);
     

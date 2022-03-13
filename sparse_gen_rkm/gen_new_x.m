@@ -9,7 +9,8 @@ function Xgen = gen_new_x(Xtr, K, params, Htr, Hgen, Nr)
     % Nr: number of obs used in kernel smoothing
     % *********************************************************
     assert(Nr > 0, 'Nr must be positive')
-    assert(strcmp(params{3}, 'eta'), 'eta must be provided')
+    assert(strcmp(params{3}, 'eta')||strcmp(params{3}, 'eta1')|| ...
+        strcmp(params{3}, 'eta2'), 'eta must be provided')
     
     % denoised similarities
     Kgen = K*Htr*Hgen' ./ params{4};
