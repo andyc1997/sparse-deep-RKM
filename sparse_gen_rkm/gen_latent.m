@@ -1,4 +1,4 @@
-function Hgen = gen_latent(Htr, l, Ngen)
+function [Hgen, h_dist] = gen_latent(Htr, l, Ngen)
     % *********************************************************
     % Htr: latent variable for training data
     % l: number of cluster for GMM

@@ -2,7 +2,7 @@ clc; clear;
 
 %% Read dataset
 N_subset = 3000; N_valid = 750;
-[Xtr, Xts, Ytr, Yts] = read_mnist(80116, N_subset, N_valid, '..\mnist');
+[Xtr, Xts, Ytr, Yts] = read_mnist(69896, N_subset, N_valid, '..\mnist');
 
 %% one versus all encoding
 Ysgn_tr = one_versus_all_encode(Ytr);
@@ -11,7 +11,7 @@ Ysgn_ts = one_versus_all_encode(Yts);
 
 %% Tune sigma
 sig_list_greedy = [10^-2, 10^-1, 10^0, 10^1, 10^2]; % greedy search over a wide range
-sig_list_refine = 5 + linspace(-2, 2, 10); % search in a refined region
+sig_list_refine = 7 + linspace(-4, 4, 30); % search in a refined region
 
 % search
 for sig = sig_list_refine  
